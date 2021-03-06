@@ -13,10 +13,10 @@ contextBridge.exposeInMainWorld('api', {
   ToioStop: (id) => {
     ipcRenderer.send('ipc-toio-stop', id);
   },
-  ToioBatteryUpdate: (id: number, handler: (arg: any) => void) => {
+  ToioBatteryUpdate: (handler: (arg: any) => void) => {
     ipcRenderer.on('ipc-toio-update-battery', (event, arg) => handler(arg));
   },
-  ToioPositionUpdate: (id: number, handler: (arg: any) => void) => {
+  ToioPositionUpdate: (handler: (arg: any) => void) => {
     ipcRenderer.on('ipc-toio-update-position', (event, arg) => handler(arg));
   },
   UpdateColor: (id: number, data: string) => {

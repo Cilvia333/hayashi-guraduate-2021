@@ -4,6 +4,7 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 import tw from 'twin.macro';
 
+import Map from '~/components/map/map';
 import Sidebar from '~/components/sidebar/sidebar';
 
 const Home: React.FC = () => {
@@ -14,6 +15,7 @@ const Home: React.FC = () => {
       </Head>
       <Container>
         <Sidebar />
+        <Map />
       </Container>
     </>
   );
