@@ -1,0 +1,9 @@
+resource
+package.json
+yarn.lock
+.next
+dist
+app
+node_modules
+.vscode
+renderer/.next

@@ -1,0 +1,9 @@
+resource
+package.json
+package-lock.json
+.next
+dist
+out
+app
+node_modules
+.vscode

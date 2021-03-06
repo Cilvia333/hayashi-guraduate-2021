@@ -1,0 +1,75 @@
+{
+  "root": true,
+  "env": {
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:eslint-comments/recommended",
+    "plugin:promise/recommended",
+    "plugin:react/recommended",
+    //"plugin:jsx-a11y/recommended",
+    "plugin:import/recommended",
+    "plugin:prettier/recommended",
+    "prettier",
+    "prettier/react"
+  ],
+  "plugins": ["react-hooks"],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "rules": {
+    "prettier/prettier": "error",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/camelcase": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "no-undef": "off",
+    "import/order": [
+      2,
+      {
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
+      }
+    ],
+    "import/extensions": [1, { "js": "never", "json": "always" }],
+    "no-unused-vars": [
+      2,
+      {
+        "argsIgnorePattern": "^_$"
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["**/*.ts?(x)"],
+      "extends": [
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:import/typescript",
+        "prettier/@typescript-eslint"
+      ],
+      "parserOptions": {
+        "warnOnUnsupportedTypeScriptVersion": true
+      },
+      "settings": {
+        "import/resolver": {
+          "typescript": {
+            "alwaysTryTypes": true,
+            "project": [
+              "renderer/tsconfig.json"
+            ]
+          }
+        }
+      },
+      "rules": {
+        "react/prop-types": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+type StoreType = {
+  orbits: OrbitData[];
+};

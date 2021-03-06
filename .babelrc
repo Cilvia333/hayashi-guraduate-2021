@@ -1,0 +1,29 @@
+{
+  "presets": [
+    [
+      "next/babel",
+      {
+        "preset-react": { "runtime": "classic" }
+      }
+    ],
+    "nextron/babel"
+  ],
+  "plugins": [
+    "babel-plugin-macros",
+    "inline-react-svg",
+    [
+      "module-resolver",         //  apply babel-plugin-module-resolver
+      {
+        alias: {
+          "~": "./renderer"
+        },
+      },
+    ],
+    [
+      "styled-components",
+      {
+        "ssr": true
+      }
+    ]
+  ]
+}

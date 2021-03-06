@@ -1,0 +1,13 @@
+{
+  "endOfLine": "lf",
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "es5",
+  "quoteProps": "consistent",
+  "overrides": [
+    {
+      "files": [".eslintrc", ".prettierrc", ".lintstagedrc", ".huskyrc"],
+      "options": { "parser": "json" }
+    }
+  ]
+}
