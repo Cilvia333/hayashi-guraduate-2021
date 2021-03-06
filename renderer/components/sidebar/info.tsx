@@ -131,6 +131,13 @@ const Info: React.FC<Props> = (props) => {
           ) : (
             ''
           )}
+          <ActiveButton
+            onClick={() => {
+              handleActive(id);
+            }}
+          >
+            {active ? 'disconnect' : 'connect'}
+          </ActiveButton>
         </Header>
         <Body>
           <ItemWrapper>
@@ -261,15 +268,6 @@ const Info: React.FC<Props> = (props) => {
               </ActiveButton>
             </MultiItems>
           </ItemWrapper>
-          <ItemWrapper>
-            <ActiveButton
-              onClick={() => {
-                handleActive(id);
-              }}
-            >
-              {active ? 'disconnect' : 'connect'}
-            </ActiveButton>
-          </ItemWrapper>
         </Body>
       </Container>
     </>
@@ -348,7 +346,7 @@ const SingleItem = styled.div`
 `;
 
 const MultiItems = styled.ul<{ open: boolean }>`
-  ${tw`pl-4 hidden m-0`}
+  ${tw`pl-4 hidden m-0 mt-2`}
 
   ${({ open }) =>
     open &&
@@ -358,11 +356,11 @@ const MultiItems = styled.ul<{ open: boolean }>`
 `;
 
 const Item = styled.li`
-  ${tw`flex justify-start items-center`}
+  ${tw`flex justify-start items-center mt-2`}
 `;
 
 const ActiveButton = styled(Button)`
-  ${tw`mt-4`}
+  ${tw`mt-0`}
 `;
 
 export default Info;

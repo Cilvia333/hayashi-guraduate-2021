@@ -22,15 +22,30 @@ const Map: React.FC = () => {
   return (
     <>
       <Container>
-        {orbits
-          ? orbits.map((_, index) => <Path id={index} key={`path_${index}`} />)
-          : ''}
+        <PathInnerWrapper>
+          {orbits
+            ? orbits.map((_, index) => (
+                <Path id={index} key={`path_${index}`} />
+              ))
+            : ''}
+        </PathInnerWrapper>
       </Container>
     </>
   );
 };
 
 const Container = styled.div`
-  ${tw`relative w-3/4`}
+  ${tw`relative w-3/4 h-screen flex items-center justify-center`}
+  max-height: 100vh;
+`;
+
+const PathInnerWrapper = styled.div`
+  ${tw`relative w-3/4 border border-lightGray border-solid`}
+
+  &::before {
+    content: '';
+    display: block;
+    padding-top: 94.5%;
+  }
 `;
 export default Map;

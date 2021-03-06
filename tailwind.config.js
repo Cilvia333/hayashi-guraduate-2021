@@ -42,8 +42,8 @@ module.exports = {
         },
       },
       fontFamily: {
-        header: ['Baskerville', 'Noto Serif JP', defaultTheme.fontFamily.serif],
-        text: ['Baskerville', 'Noto Serif JP', defaultTheme.fontFamily.serif],
+        header: ['Avenir Next', 'Noto Sans JP', defaultTheme.fontFamily.sans],
+        text: ['Avenir Next', 'Noto Sans JP', defaultTheme.fontFamily.sans],
       },
       borderRadius: {
         circle: '50%',

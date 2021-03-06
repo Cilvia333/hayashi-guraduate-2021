@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useEffectOnce } from 'react-use';
+import { useEffectOnce, useMeasure } from 'react-use';
 import styled, { css } from 'styled-components';
 import tw from 'twin.macro';
 
@@ -12,7 +12,16 @@ const Path: React.FC<Props> = (props) => {
 
   const [color, setColor] = useState('#ff0000');
   const [position, setPosition] = useState<Position>({ x: 0, y: 0, angle: 0 });
+  const [calcPosition, setCalcPosition] = useState<Position>({
+    x: 0,
+    y: 0,
+    angle: 0,
+  });
   const [paths, setPaths] = useState<OrbitPath[]>([]);
+  const [
+    rectRef,
+    { x, y, width, height, top, right, bottom, left },
+  ] = useMeasure();
 
   const init = async () => {
     const data = await window.api.GetOrbitById(id);
@@ -32,9 +41,11 @@ const Path: React.FC<Props> = (props) => {
     init();
   });
 
+  useEffect(() => {}, [position]);
+
   return (
     <>
-      <Container>
+      <Container ref={rectRef}>
         <StyledSvg
           color={color}
           fill="transparent"
@@ -45,13 +56,26 @@ const Path: React.FC<Props> = (props) => {
             <path d={path.path} key={`path_${index}`} />
           ))}
         </StyledSvg>
+        <Marker color={color} />
       </Container>
     </>
   );
 };
 
 const Container = styled.div`
-  ${tw`absolute inset-0 m-0`}
+  ${tw`absolute inset-0 m-auto h-full w-full`}
+`;
+
+const Marker = styled.div<{ position: Position; color: string }>`
+  ${tw`absolute w-12 h-12`}
+
+  ${({ color }) => css`
+    color: ${color};
+  `}
+
+  ${({ position }) => css`
+    transform: translate(${position.x}, ${position.y}) rotate(${position.angle});
+  `}
 `;
 
 const StyledSvg = styled.svg<{ color: string }>`
