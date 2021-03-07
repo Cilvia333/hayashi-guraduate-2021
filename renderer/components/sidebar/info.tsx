@@ -1,3 +1,4 @@
+import { fromEvent } from 'file-selector';
 import React, { useState, useEffect } from 'react';
 import { useToggle, useEffectOnce } from 'react-use';
 import styled, { css } from 'styled-components';
@@ -7,12 +8,13 @@ import Button from '~/components/share/button';
 
 interface Props {
   id: number;
+  onDelete: (id: number) => void;
 }
 
 type Indicator = 'full' | 'middle' | 'low';
 
 const Info: React.FC<Props> = (props) => {
-  const { id } = props;
+  const { id, onDelete } = props;
 
   const [active, toggleActive] = useToggle(false);
   const [run, toggleRun] = useToggle(false);
@@ -69,8 +71,6 @@ const Info: React.FC<Props> = (props) => {
     const newPaths = paths.filter((_, i) => i !== index);
     newPaths.splice(index, 0, path);
 
-    console.log(newPaths);
-
     window.api.UpdatePaths(id, newPaths);
     setPaths(newPaths);
   };
@@ -112,6 +112,40 @@ const Info: React.FC<Props> = (props) => {
       toggleRun(false);
       return;
     }
+  };
+
+  const handleDeletePath = async (index: number) => {
+    const result = await window.api.DeletePath(id, index);
+    if (!result) {
+      return;
+    }
+    const newPaths = paths.filter((_, i) => i !== index);
+    setPaths(newPaths);
+  };
+
+  const handleSvgFile = async (event: any, index: number) => {
+    const files: any = await fromEvent(event);
+    if (!files || files.length < 1) {
+      return;
+    }
+
+    const result = await window.api.ChangePath(id, index, files[0].path);
+
+    if (!result) {
+      return;
+    }
+
+    const currenPath = paths.filter((_, i) => i === index)[0];
+    const newPaths = paths.filter((_, i) => i !== index);
+    newPaths.splice(index, 0, { ...currenPath, path: result });
+
+    setPaths(newPaths);
+  };
+
+  const handleDeleteOrbit = async () => {
+    await window.api.DeleteOrbit(id);
+    onDelete(id);
+    return;
   };
 
   return (
@@ -206,11 +240,19 @@ const Info: React.FC<Props> = (props) => {
                 <ItemWrapper key={`paths_${index}`}>
                   <MultiItemTitle2>
                     {`path[${index}]:`}
-                    <DeleteButton>削除</DeleteButton>
+                    <DeleteButton
+                      onClick={() => {
+                        handleDeletePath(index);
+                      }}
+                    >
+                      削除
+                    </DeleteButton>
                   </MultiItemTitle2>
                   <MultiItems open={true}>
                     <Item>
                       <ItemTitle>パス:</ItemTitle>
+                    </Item>
+                    <UpdatePathWrapper>
                       <ItemValue
                         value={item.path}
                         type="text"
@@ -219,11 +261,19 @@ const Info: React.FC<Props> = (props) => {
                           handlePaths(index, { ...item, path: e.target.value })
                         }
                       />
-                    </Item>
+                      <UpdatePathArea
+                        type="file"
+                        onChange={(e: any) => {
+                          handleSvgFile(e, index);
+                        }}
+                        accept=".svg"
+                      />
+                    </UpdatePathWrapper>
                     <Item>
                       <ItemTitle>バック走行:</ItemTitle>
                       <ItemValue
                         checked={item.back}
+                        value={undefined}
                         type="checkbox"
                         name="back"
                         onChange={(e) =>
@@ -273,6 +323,13 @@ const Info: React.FC<Props> = (props) => {
                 pathを追加
               </ActiveButton>
             </MultiItems>
+            <ActiveButton
+              onClick={() => {
+                handleDeleteOrbit();
+              }}
+            >
+              toioを削除
+            </ActiveButton>
           </ItemWrapper>
         </Body>
       </Container>
@@ -353,7 +410,7 @@ const ItemValue = styled.input`
   ${tw`text-base font-text border`}
 
   &[type='text'] {
-    ${tw`border rounded-none focus:border-blue-500 focus:border-2 focus:outline-none`}
+    ${tw`border rounded-none focus:border-blue-500 focus:border-2 focus:outline-none w-full`}
     -webkit-appearance: none;
   }
 
@@ -395,6 +452,18 @@ const ActiveButton = styled(Button)`
 
 const DeleteButton = styled(Button)`
   ${tw`text-sm`}
+`;
+
+const UpdateButton = styled(Button)`
+  ${tw`text-sm mt-2`}
+`;
+
+const UpdatePathWrapper = styled.div`
+  ${tw`justify-end items-center mt-1 text-right`}
+`;
+
+const UpdatePathArea = styled.input`
+  ${tw`text-white text-base px-2 py-1 bg-gray border border-solid border-black text-right w-full mt-2`}
 `;
 
 export default Info;

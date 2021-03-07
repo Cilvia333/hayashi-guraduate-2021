@@ -5,31 +5,24 @@ import tw from 'twin.macro';
 
 interface Props {
   id: number;
+  orbit: OrbitData;
 }
 
 const Path: React.FC<Props> = (props) => {
-  const { id } = props;
+  const { id, orbit } = props;
 
-  const [color, setColor] = useState('#ff0000');
   const [position, setPosition] = useState<Position>({ x: 0, y: 0, angle: 0 });
   const [calcPosition, setCalcPosition] = useState<Position>({
     x: 0,
     y: 0,
     angle: 0,
   });
-  const [paths, setPaths] = useState<OrbitPath[]>([]);
   const [
     rectRef,
     { x, y, width, height, top, right, bottom, left },
   ] = useMeasure();
 
   const init = async () => {
-    const data = await window.api.GetOrbitById(id);
-    if (data) {
-      setColor(data.color);
-      setPaths(data.paths);
-    }
-
     window.api.ToioPositionUpdate((data) => {
       if (data.id === id) {
         setPosition(data.value);
@@ -47,16 +40,16 @@ const Path: React.FC<Props> = (props) => {
     <>
       <Container ref={rectRef}>
         <StyledSvg
-          color={color}
+          color={orbit.color}
           fill="transparent"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 2525.67 2381.1"
         >
-          {paths.map((path, index) => (
+          {orbit.paths.map((path, index) => (
             <path d={path.path} key={`path_${index}`} />
           ))}
         </StyledSvg>
-        <Marker position={calcPosition} color={color} />
+        <Marker position={calcPosition} color={orbit.color} />
       </Container>
     </>
   );

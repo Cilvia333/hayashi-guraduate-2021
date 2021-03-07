@@ -15,8 +15,13 @@ const Map: React.FC = () => {
     }
   };
 
+  const handleUpdateStore = (newOrbits: OrbitData[]) => {
+    setOrbits(newOrbits);
+  };
+
   useEffectOnce(() => {
     init();
+    window.api.StoreUpdate(handleUpdateStore);
   });
 
   return (
@@ -24,8 +29,8 @@ const Map: React.FC = () => {
       <Container>
         <PathInnerWrapper>
           {orbits
-            ? orbits.map((_, index) => (
-                <Path id={index} key={`path_${index}`} />
+            ? orbits.map((orbit, index) => (
+                <Path id={index} orbit={orbit} key={`path_${index}`} />
               ))
             : ''}
         </PathInnerWrapper>

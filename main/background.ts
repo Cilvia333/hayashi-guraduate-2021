@@ -1,12 +1,17 @@
+import { readFile } from 'fs';
 import path from 'path';
+import { promisify } from 'util';
 
 import { NearestScanner, NearScanner } from '@toio/scanner';
 import { app, ipcMain } from 'electron';
 import serve from 'electron-serve';
 import Store from 'electron-store';
+import { JSDOM } from 'jsdom';
 
 import { createWindow, openFile, saveFile } from './helpers';
 import toio from './toio';
+
+const asyncReadFile = promisify(readFile);
 
 let mainWindow: Electron.BrowserWindow = null;
 const isProd: boolean = process.env.NODE_ENV === 'production';
@@ -50,6 +55,12 @@ const handlePosition = (id: number, position: Position) => {
   }
 };
 
+const handleUpdateStore = (orbits: OrbitData[]) => {
+  if (mainWindow !== null) {
+    mainWindow.webContents.send('ipc-store-update', orbits);
+  }
+};
+
 if (isProd) {
   serve({ directory: 'app' });
 } else {
@@ -81,6 +92,10 @@ app.on('window-all-closed', () => {
   app.quit();
 });
 
+store.onDidChange('orbits', (newOrbits, oldOrbits) => {
+  handleUpdateStore(newOrbits);
+});
+
 ipcMain.handle('ipc-toio-connect', async (event, argv) => {
   const id = argv as number;
   const orbits = store.get('orbits');
@@ -89,7 +104,13 @@ ipcMain.handle('ipc-toio-connect', async (event, argv) => {
     console.log('あるよ');
     return true;
   } else if (orbits.length > id) {
-    const ref = await toio(id, orbits[id], toioScaner, handleBattery);
+    const ref = await toio(
+      id,
+      orbits[id],
+      toioScaner,
+      handleBattery,
+      handlePosition
+    );
     toioRefs.set(id, ref);
     return true;
   }
@@ -151,6 +172,72 @@ ipcMain.handle('ipc-toio-add-path', (event, argv) => {
   }
 
   return null;
+});
+
+ipcMain.handle('ipc-toio-delete-path', (event, argv) => {
+  const orbits = store.get('orbits');
+  const id = argv.id as number;
+  const index = argv.index as number;
+
+  if (orbits[id]) {
+    const newPaths = orbits[id].paths.filter((_, i) => i !== index);
+    const newData = { ...orbits[id], paths: newPaths };
+
+    const newOrbits = orbits.filter((_, i) => i !== id);
+    newOrbits.splice(id, 0, newData);
+    store.set('orbits', newOrbits);
+
+    return true;
+  }
+
+  return false;
+});
+
+ipcMain.handle('ipc-toio-change-path', async (event, argv) => {
+  const orbits = store.get('orbits');
+  const id = argv.id as number;
+  const index = argv.index as number;
+  const fileName = argv.fileName as string;
+
+  if (orbits[id]) {
+    const data = await asyncReadFile(fileName);
+    const svg = data.toString();
+
+    const dom = new JSDOM(svg, { includeNodeLocations: true });
+    const d = dom.window.document.querySelector('path').getAttribute('d');
+
+    console.log(d);
+
+    const currentPath = orbits[id].paths.filter((_, i) => i === index)[0];
+    const newPath = { ...currentPath, path: d };
+
+    const paths = orbits[id].paths.filter((_, i) => i !== index);
+    paths.splice(index, 0, newPath);
+    const newOrbit = { ...orbits[id], paths };
+
+    const newOrbits = orbits.filter((_, i) => i !== id);
+    newOrbits.splice(id, 0, newOrbit);
+    store.set('orbits', newOrbits);
+
+    return d;
+  }
+
+  return null;
+});
+
+ipcMain.handle('ipc-toio-delete-orbit', (event, argv) => {
+  const orbits = store.get('orbits');
+  const id = argv as number;
+
+  if (!orbits[id]) {
+    return false;
+  }
+
+  const newOrbits = orbits.filter((_, i) => i !== id);
+
+  store.set('orbits', newOrbits);
+
+  return true;
 });
 
 ipcMain.handle('ipc-toio-create-orbit', () => {

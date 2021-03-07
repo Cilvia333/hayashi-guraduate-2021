@@ -28,6 +28,10 @@ const Sidebar: React.FC = () => {
     }
   };
 
+  const handleDeleteOrbit = (id: number) => {
+    init();
+  };
+
   useEffectOnce(() => {
     init();
   });
@@ -39,7 +43,11 @@ const Sidebar: React.FC = () => {
         <List>
           {orbits
             ? orbits.map((orbit, index) => (
-                <Info id={index} key={`orbit_${index}`} />
+                <Info
+                  id={index}
+                  key={`orbit_${index}`}
+                  onDelete={handleDeleteOrbit}
+                />
               ))
             : ''}
           <Button

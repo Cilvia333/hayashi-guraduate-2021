@@ -16,7 +16,11 @@ export interface Sandbox {
   UpdateStartPosition: (id: number, data: Position) => void;
   UpdatePaths: (id: number, data: OrbitPath[]) => void;
   AddPath: (id: number) => Promise<OrbitPath[]>;
+  DeletePath: (id: number, index: number) => Promise<boolean>;
+  ChangePath: (id: number, index: number, fileName: string) => Promise<string>;
   GetAllOrbits: () => Promise<OrbitData[] | null>;
   GetOrbitById: (id: number) => Promise<OrbitData | null>;
   CreateOrbit: () => Promise<{ id: number; orbit: OrbitData } | null>;
+  DeleteOrbit: (id: number) => Promise<boolean>;
+  StoreUpdate: (handler: (arg: OrbitData[]) => void) => void;
 }

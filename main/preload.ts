@@ -34,11 +34,15 @@ contextBridge.exposeInMainWorld('api', {
   AddPath: async (id: number) => {
     return await ipcRenderer.invoke('ipc-toio-add-path', id);
   },
-  DeletePath: async (id: number, num: number) => {
-    return await ipcRenderer.invoke('ipc-toio-delete-path', { id, num });
+  DeletePath: async (id: number, index: number) => {
+    return await ipcRenderer.invoke('ipc-toio-delete-path', { id, index });
   },
-  ChangePath: async (id: number, fileName: string) => {
-    return await ipcRenderer.invoke('ipc-toio-delete-path', { id, fileName });
+  ChangePath: async (id: number, index: number, fileName: string) => {
+    return await ipcRenderer.invoke('ipc-toio-change-path', {
+      id,
+      index,
+      fileName,
+    });
   },
   GetAllOrbits: async () => {
     return await ipcRenderer.invoke('ipc-toio-get-orbits-all');
@@ -48,5 +52,11 @@ contextBridge.exposeInMainWorld('api', {
   },
   CreateOrbit: async () => {
     return await ipcRenderer.invoke('ipc-toio-create-orbit');
+  },
+  DeleteOrbit: async (id: number) => {
+    return await ipcRenderer.invoke('ipc-toio-delete-orbit', id);
+  },
+  StoreUpdate: (handler: (arg: any) => void) => {
+    ipcRenderer.on('ipc-store-update', (event, arg) => handler(arg));
   },
 });

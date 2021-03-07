@@ -16,7 +16,7 @@ export const openFile = (): any | null => {
   return readFile(paths[0]);
 };
 
-const readFile = (path) => {
+export const readFile = (path) => {
   const json = JSON.parse(fs.readFileSync(path, 'utf-8'));
 
   if (!json) {
@@ -40,6 +40,6 @@ export const saveFile = (data: any): void => {
   writeFile(paths[0], data);
 };
 
-const writeFile = (path, data) => {
+export const writeFile = (path, data) => {
   fs.writeFileSync(path, JSON.stringify(data));
 };
