@@ -34,6 +34,12 @@ contextBridge.exposeInMainWorld('api', {
   AddPath: async (id: number) => {
     return await ipcRenderer.invoke('ipc-toio-add-path', id);
   },
+  DeletePath: async (id: number, num: number) => {
+    return await ipcRenderer.invoke('ipc-toio-delete-path', { id, num });
+  },
+  ChangePath: async (id: number, fileName: string) => {
+    return await ipcRenderer.invoke('ipc-toio-delete-path', { id, fileName });
+  },
   GetAllOrbits: async () => {
     return await ipcRenderer.invoke('ipc-toio-get-orbits-all');
   },

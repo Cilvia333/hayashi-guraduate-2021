@@ -119,7 +119,10 @@ const Info: React.FC<Props> = (props) => {
       <Container>
         <Header>
           <Indicator battery={active ? battery : -1} />
-          <Name>{`${name} : ${id}`}</Name>
+          <Name>
+            <NameInput value={name} type="text" />
+            {`: ${id}`}
+          </Name>
           {active ? (
             <Button
               onClick={() => {
@@ -131,13 +134,13 @@ const Info: React.FC<Props> = (props) => {
           ) : (
             ''
           )}
-          <ActiveButton
+          <Button
             onClick={() => {
               handleActive(id);
             }}
           >
             {active ? 'disconnect' : 'connect'}
-          </ActiveButton>
+          </Button>
         </Header>
         <Body>
           <ItemWrapper>
@@ -201,7 +204,10 @@ const Info: React.FC<Props> = (props) => {
             <MultiItems open={pathsOpen}>
               {paths.map((item, index) => (
                 <ItemWrapper key={`paths_${index}`}>
-                  <ItemTitle>{`path[${index}]:`}</ItemTitle>
+                  <MultiItemTitle2>
+                    {`path[${index}]:`}
+                    <DeleteButton>削除</DeleteButton>
+                  </MultiItemTitle2>
                   <MultiItems open={true}>
                     <Item>
                       <ItemTitle>パス:</ItemTitle>
@@ -307,7 +313,11 @@ const Indicator = styled.div<{ battery: number }>`
 `;
 
 const Name = styled.h2`
-  ${tw`text-base font-header text-left mx-2 my-0`}
+  ${tw`text-base font-header text-left mx-2 my-0 flex justify-start items-center`}
+`;
+
+const NameInput = styled.input`
+  ${tw`text-base font-header font-bold outline-none border-0 border-solid border-blue-500 focus:border-2 w-20 mr-2`}
 `;
 
 const Body = styled.article`
@@ -315,11 +325,15 @@ const Body = styled.article`
 `;
 
 const ItemTitle = styled.h3`
-  ${tw`text-base font-text font-bold m-0 mr-2`}
+  ${tw`text-base font-text font-bold m-0 whitespace-nowrap mt-2 flex justify-between items-center `}
+`;
+
+const MultiItemTitle2 = styled(ItemTitle)`
+  ${tw`mt-4`}
 `;
 
 const MultiItemTitle = styled.h3<{ open: boolean }>`
-  ${tw`text-base font-text font-bold relative m-0 mt-2`}
+  ${tw`text-base font-text font-bold relative m-0 mt-2 flex justify-between items-center`}
 
   &::before {
     ${tw`absolute -left-4 top-1 text-xs`}
@@ -336,7 +350,23 @@ const MultiItemTitle = styled.h3<{ open: boolean }>`
 `;
 
 const ItemValue = styled.input`
-  ${tw`text-base font-text`}
+  ${tw`text-base font-text border`}
+
+  &[type='text'] {
+    ${tw`border rounded-none focus:border-blue-500 focus:border-2 focus:outline-none`}
+    -webkit-appearance: none;
+  }
+
+  &[type='number'] {
+    ${tw`w-24 text-right px-2`}
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+      -moz-appearance: textfield;
+    }
+  }
 `;
 
 const ItemWrapper = styled.div``;
@@ -356,11 +386,15 @@ const MultiItems = styled.ul<{ open: boolean }>`
 `;
 
 const Item = styled.li`
-  ${tw`flex justify-start items-center mt-2`}
+  ${tw`flex justify-between items-center mt-2 `}
 `;
 
 const ActiveButton = styled(Button)`
-  ${tw`mt-0`}
+  ${tw`mt-4`}
+`;
+
+const DeleteButton = styled(Button)`
+  ${tw`text-sm`}
 `;
 
 export default Info;

@@ -56,7 +56,7 @@ const Path: React.FC<Props> = (props) => {
             <path d={path.path} key={`path_${index}`} />
           ))}
         </StyledSvg>
-        <Marker color={color} />
+        <Marker position={calcPosition} color={color} />
       </Container>
     </>
   );
@@ -67,14 +67,15 @@ const Container = styled.div`
 `;
 
 const Marker = styled.div<{ position: Position; color: string }>`
-  ${tw`absolute w-12 h-12`}
+  ${tw`absolute top-0 left-0 m-0 w-12 h-12`}
 
   ${({ color }) => css`
     color: ${color};
   `}
 
   ${({ position }) => css`
-    transform: translate(${position.x}, ${position.y}) rotate(${position.angle});
+    transform: translate(${position.x}px, ${position.y}px)
+      rotate(${position.angle}deg);
   `}
 `;
 
