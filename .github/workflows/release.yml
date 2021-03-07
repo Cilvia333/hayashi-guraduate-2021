@@ -58,8 +58,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # Linux 用の job 定義
-  build_on_win:
-    runs-on: windows-latest
+  build_on_linux:
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js 12.x
@@ -76,6 +76,6 @@ jobs:
       with:
         draft: true
         files: |
-          dist/*.exe
+          dist/*.deb
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
