@@ -64,7 +64,7 @@ const Info: React.FC<Props> = (props) => {
   });
 
   useEffect(() => {
-    handleRun(id, allStart);
+    handleRun(!allStart);
   }, [allStart]);
 
   const handleColor = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,30 +94,26 @@ const Info: React.FC<Props> = (props) => {
 
   const handleActive = async (id: number) => {
     if (!active) {
-      console.log('connect');
       await window.api.ToioConnect(id);
       toggleActive(true);
       return;
     }
 
     if (active) {
-      console.log('disconnect');
       await window.api.ToioDisconnect(id);
       toggleActive(false);
       return;
     }
   };
 
-  const handleRun = async (id: number, status: boolean = run) => {
+  const handleRun = async (status: boolean = run) => {
     if (!status) {
-      console.log('connect');
       await window.api.ToioStart(id);
       toggleRun(true);
       return;
     }
 
     if (status) {
-      console.log('disconnect');
       await window.api.ToioStop(id);
       toggleRun(false);
       return;
@@ -167,10 +163,10 @@ const Info: React.FC<Props> = (props) => {
             <NameInput value={name} type="text" />
             {`: ${id}`}
           </Name>
-          {active ? (
+          {true ? (
             <Button
               onClick={() => {
-                handleRun(id);
+                handleRun();
               }}
             >
               {run ? 'stop' : 'start'}
