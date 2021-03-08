@@ -72,6 +72,11 @@ const Info: React.FC<Props> = (props) => {
     setColor(event.target.value);
   };
 
+  const handleName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    window.api.UpdateName(id, event.target.value);
+    setName(event.target.value);
+  };
+
   const handleStartPos = (value: Position) => {
     window.api.UpdateStartPosition(id, value);
     setStartPos(value);
@@ -160,10 +165,10 @@ const Info: React.FC<Props> = (props) => {
         <Header>
           <Indicator battery={active ? battery : -1} />
           <Name>
-            <NameInput value={name} type="text" />
+            <NameInput value={name} type="text" onChange={handleName} />
             {`: ${id}`}
           </Name>
-          {true ? (
+          {active ? (
             <Button
               onClick={() => {
                 handleRun();
