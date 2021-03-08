@@ -10,6 +10,7 @@ import Button from '~/components/share/button';
 
 const Sidebar: React.FC = () => {
   const [orbits, setOrbits] = useState<OrbitData[]>(null);
+  const [allStart, setAllStart] = useState<boolean>(false);
 
   const init = async () => {
     const orbits = await window.api.GetAllOrbits();
@@ -46,20 +47,40 @@ const Sidebar: React.FC = () => {
         <Header />
         <ConfigContainer>
           <ConfigHeading>設定</ConfigHeading>
-          <ConfigButton
-            onClick={() => {
-              window.api.ExportConfig();
-            }}
-          >
-            Export
-          </ConfigButton>
-          <ConfigButton
-            onClick={() => {
-              window.api.ImportConfig();
-            }}
-          >
-            Import
-          </ConfigButton>
+          <ConfigItem>
+            <ConfigTitle>一括制御</ConfigTitle>
+            <ConfigButton
+              onClick={() => {
+                setAllStart(true);
+              }}
+            >
+              全て動かす
+            </ConfigButton>
+            <ConfigButton
+              onClick={() => {
+                setAllStart(false);
+              }}
+            >
+              全て止める
+            </ConfigButton>
+          </ConfigItem>
+          <ConfigItem>
+            <ConfigTitle>設定ファイル</ConfigTitle>
+            <ConfigButton
+              onClick={() => {
+                window.api.ExportConfig();
+              }}
+            >
+              Export
+            </ConfigButton>
+            <ConfigButton
+              onClick={() => {
+                window.api.ImportConfig();
+              }}
+            >
+              Import
+            </ConfigButton>
+          </ConfigItem>
         </ConfigContainer>
         <List>
           {orbits
@@ -67,6 +88,7 @@ const Sidebar: React.FC = () => {
                 <Info
                   id={index}
                   key={`orbit_${index}`}
+                  allStart={allStart}
                   onDelete={handleDeleteOrbit}
                 />
               ))
@@ -98,6 +120,14 @@ const List = styled.section`
 
 const ConfigHeading = styled.div`
   ${tw`font-header font-bold text-xl`}
+`;
+
+const ConfigItem = styled.div`
+  ${tw`mb-4`}
+`;
+
+const ConfigTitle = styled.div`
+  ${tw`font-header font-bold text-base`}
 `;
 
 const ConfigContainer = styled.section`

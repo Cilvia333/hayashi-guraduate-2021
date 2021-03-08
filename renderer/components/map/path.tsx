@@ -29,7 +29,7 @@ const Path: React.FC<Props> = (props) => {
   const init = async () => {
     window.api.ToioPositionUpdate((data) => {
       if (data.id === id) {
-        setPosition(data.value);
+        setPosition(data.position);
       }
     });
   };
@@ -46,9 +46,13 @@ const Path: React.FC<Props> = (props) => {
     const X_LENGTH = X_MAX - X_OFFSET;
     const Y_LENGTH = Y_MAX - Y_OFFSET;
 
+    if (!position) {
+      return;
+    }
+
     setCalcPosition({
-      x: (height / X_LENGTH) * (position.x - X_OFFSET),
-      y: (width / Y_LENGTH) * (position.y - Y_OFFSET),
+      x: (width / Y_LENGTH) * (position.y - Y_OFFSET),
+      y: (height / X_LENGTH) * (X_MAX - position.x - X_OFFSET),
       angle: position.angle,
     });
   }, [position]);

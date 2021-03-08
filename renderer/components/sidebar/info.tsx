@@ -8,13 +8,14 @@ import Button from '~/components/share/button';
 
 interface Props {
   id: number;
+  allStart: boolean;
   onDelete: (id: number) => void;
 }
 
 type Indicator = 'full' | 'middle' | 'low';
 
 const Info: React.FC<Props> = (props) => {
-  const { id, onDelete } = props;
+  const { id, allStart, onDelete } = props;
 
   const [active, toggleActive] = useToggle(false);
   const [run, toggleRun] = useToggle(false);
@@ -62,6 +63,10 @@ const Info: React.FC<Props> = (props) => {
     window.api.UpdateConfig(handleUpdateConfig);
   });
 
+  useEffect(() => {
+    handleRun(id, allStart);
+  }, [allStart]);
+
   const handleColor = (event: React.ChangeEvent<HTMLInputElement>) => {
     window.api.UpdateColor(id, event.target.value);
     setColor(event.target.value);
@@ -103,15 +108,15 @@ const Info: React.FC<Props> = (props) => {
     }
   };
 
-  const handleRun = async (id: number) => {
-    if (!run) {
+  const handleRun = async (id: number, status: boolean = run) => {
+    if (!status) {
       console.log('connect');
       await window.api.ToioStart(id);
       toggleRun(true);
       return;
     }
 
-    if (run) {
+    if (status) {
       console.log('disconnect');
       await window.api.ToioStop(id);
       toggleRun(false);

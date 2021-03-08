@@ -16,7 +16,7 @@ const asyncReadFile = promisify(readFile);
 let mainWindow: Electron.BrowserWindow = null;
 const isProd: boolean = process.env.NODE_ENV === 'production';
 const toioRefs = new Map<number, ToioRef>();
-const toioScaner = new NearScanner(4);
+const toioScaner = new NearScanner(1);
 const store = new Store<StoreType>();
 
 const default_path = {
