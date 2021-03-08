@@ -3,6 +3,14 @@ import { useEffectOnce, useMeasure } from 'react-use';
 import styled, { css } from 'styled-components';
 import tw from 'twin.macro';
 
+import VectorSvg from '~/assets/vector.svg';
+
+const X_OFFSET = 34;
+const Y_OFFSET = 35;
+const X_MAX = 644;
+const Y_MAX = 682;
+const X_LENGTH = X_MAX - X_OFFSET;
+const Y_LENGTH = Y_MAX - Y_OFFSET;
 interface Props {
   id: number;
   orbit: OrbitData;
@@ -36,26 +44,31 @@ const Path: React.FC<Props> = (props) => {
 
   useEffectOnce(() => {
     init();
-  });
-
-  useEffect(() => {
-    const X_OFFSET = 34;
-    const Y_OFFSET = 35;
-    const X_MAX = 644;
-    const Y_MAX = 682;
-    const X_LENGTH = X_MAX - X_OFFSET;
-    const Y_LENGTH = Y_MAX - Y_OFFSET;
-
-    if (!position) {
-      return;
-    }
 
     setCalcPosition({
       x: (width / Y_LENGTH) * (position.y - Y_OFFSET),
       y: (height / X_LENGTH) * (X_MAX - position.x - X_OFFSET),
       angle: position.angle,
     });
-  }, [position]);
+  });
+
+  useEffect(() => {
+    if (!position) {
+      return;
+    }
+
+    console.log({
+      x: (width / Y_LENGTH) * (position.y - Y_OFFSET),
+      y: (height / X_LENGTH) * (X_MAX - position.x - X_OFFSET),
+      angle: position.angle,
+    });
+
+    setCalcPosition({
+      x: (width / Y_LENGTH) * (position.y - Y_OFFSET),
+      y: (height / X_LENGTH) * (X_MAX - position.x - X_OFFSET),
+      angle: position.angle,
+    });
+  }, [position, width, height]);
 
   return (
     <>
@@ -71,7 +84,7 @@ const Path: React.FC<Props> = (props) => {
           ))}
         </StyledSvg>
         <Marker position={calcPosition} color={orbit.color}>
-          ▲
+          <StyledVector fill="transparent" color={orbit.color} />
         </Marker>
       </Container>
     </>
@@ -102,6 +115,17 @@ const StyledSvg = styled.svg<{ color: string }>`
 
   stroke-width: 4px;
 
+  ${({ color }) => css`
+    color: ${color};
+  `}
+`;
+
+const StyledVector = styled(VectorSvg)<{ color: string }>`
+  ${tw`stroke-current absolute inset-0 m-auto`}
+
+  width: calc(100% - 12px);
+
+  stroke-width: 70px;
   ${({ color }) => css`
     color: ${color};
   `}
