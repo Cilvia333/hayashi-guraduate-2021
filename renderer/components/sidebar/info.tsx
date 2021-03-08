@@ -53,8 +53,13 @@ const Info: React.FC<Props> = (props) => {
     });
   };
 
+  const handleUpdateConfig = () => {
+    init();
+  };
+
   useEffectOnce(() => {
     init();
+    window.api.UpdateConfig(handleUpdateConfig);
   });
 
   const handleColor = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -338,11 +343,11 @@ const Info: React.FC<Props> = (props) => {
 };
 
 const Container = styled.section`
-  ${tw`p-4`}
+  ${tw`py-4`}
 `;
 
 const Header = styled.header`
-  ${tw`flex justify-start items-center border-0 border-b border-solid border-black pb-3`}
+  ${tw`flex justify-start items-center border-0 border-b border-solid border-black pb-2`}
 `;
 
 const Indicator = styled.div<{ battery: number }>`

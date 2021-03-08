@@ -14,7 +14,6 @@ const Sidebar: React.FC = () => {
   const init = async () => {
     const orbits = await window.api.GetAllOrbits();
     if (orbits) {
-      console.log(orbits);
       setOrbits(orbits);
     }
   };
@@ -32,14 +31,36 @@ const Sidebar: React.FC = () => {
     init();
   };
 
+  const handleUpdateConfig = () => {
+    init();
+  };
+
   useEffectOnce(() => {
     init();
+    window.api.UpdateConfig(handleUpdateConfig);
   });
 
   return (
     <>
       <Container>
         <Header />
+        <ConfigContainer>
+          <ConfigHeading>設定</ConfigHeading>
+          <ConfigButton
+            onClick={() => {
+              window.api.ExportConfig();
+            }}
+          >
+            Export
+          </ConfigButton>
+          <ConfigButton
+            onClick={() => {
+              window.api.ImportConfig();
+            }}
+          >
+            Import
+          </ConfigButton>
+        </ConfigContainer>
         <List>
           {orbits
             ? orbits.map((orbit, index) => (
@@ -71,6 +92,18 @@ const Container = styled.div`
 
 const List = styled.section`
   ${tw`px-4 relative overflow-y-scroll`}
+`;
+
+const ConfigHeading = styled.div`
+  ${tw`font-header font-bold text-xl`}
+`;
+
+const ConfigContainer = styled.section`
+  ${tw`w-full border-0 border-b border-solid border-black px-4 py-4`}
+`;
+
+const ConfigButton = styled(Button)`
+  ${tw`mr-2 mt-4`}
 `;
 
 export default Sidebar;

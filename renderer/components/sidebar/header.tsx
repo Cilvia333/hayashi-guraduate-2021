@@ -7,7 +7,7 @@ const SideHeader: React.FC = () => {
     <>
       <Container>
         <Title>Marshmallow Mobiles Controller</Title>
-        <Version>ver0.9.0</Version>
+        <Version>ver.0.9.0</Version>
       </Container>
     </>
   );
@@ -22,7 +22,7 @@ const Title = styled.h1`
 `;
 
 const Version = styled.h3`
-  ${tw`text-base font-header m-0 mt-2`}
+  ${tw`text-base font-header font-normal m-0`}
 `;
 
 export default SideHeader;

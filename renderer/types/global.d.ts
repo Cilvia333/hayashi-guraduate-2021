@@ -23,4 +23,7 @@ export interface Sandbox {
   CreateOrbit: () => Promise<{ id: number; orbit: OrbitData } | null>;
   DeleteOrbit: (id: number) => Promise<boolean>;
   StoreUpdate: (handler: (arg: OrbitData[]) => void) => void;
+  ExportConfig: () => void;
+  ImportConfig: () => void;
+  UpdateConfig: (handler: () => void) => void;
 }

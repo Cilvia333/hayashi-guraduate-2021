@@ -59,4 +59,13 @@ contextBridge.exposeInMainWorld('api', {
   StoreUpdate: (handler: (arg: any) => void) => {
     ipcRenderer.on('ipc-store-update', (event, arg) => handler(arg));
   },
+  ExportConfig: () => {
+    ipcRenderer.send('ipc-config-export');
+  },
+  ImportConfig: () => {
+    ipcRenderer.send('ipc-config-import');
+  },
+  UpdateConfig: (handler: () => void) => {
+    ipcRenderer.on('ipc-config-update', () => handler());
+  },
 });

@@ -19,8 +19,13 @@ const Map: React.FC = () => {
     setOrbits(newOrbits);
   };
 
+  const handleUpdateConfig = () => {
+    init();
+  };
+
   useEffectOnce(() => {
     init();
+    window.api.UpdateConfig(handleUpdateConfig);
     window.api.StoreUpdate(handleUpdateStore);
   });
 

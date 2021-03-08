@@ -1,23 +1,23 @@
-import fs from 'fs';
+import { readFile, writeFile } from 'fs';
+import { promisify } from 'util';
 
 import { BrowserWindow, dialog } from 'electron';
 
-export const openFile = (): any | null => {
+const asyncReadFile = promisify(readFile);
+const asyncWriteFile = promisify(writeFile);
+
+export const openFile = async () => {
   const win = BrowserWindow.getFocusedWindow();
-  const paths = dialog.showOpenDialog(win, {
+  const path = await dialog.showOpenDialog(win, {
     properties: ['openFile'],
     filters: [{ name: 'Document', extensions: ['json'] }],
   });
 
-  if (!paths) {
+  if (!path) {
     return null;
   }
 
-  return readFile(paths[0]);
-};
-
-export const readFile = (path) => {
-  const json = JSON.parse(fs.readFileSync(path, 'utf-8'));
+  const json = JSON.parse(await asyncReadFile(path.filePaths[0], 'utf-8'));
 
   if (!json) {
     return null;
@@ -26,20 +26,16 @@ export const readFile = (path) => {
   return json;
 };
 
-export const saveFile = (data: any): void => {
+export const saveFile = async (data: any) => {
   const win = BrowserWindow.getFocusedWindow();
-  const paths = dialog.showOpenDialog(win, {
-    properties: ['openFile'],
-    filters: [{ name: 'Document', extensions: ['json'] }],
+  const path = await dialog.showSaveDialogSync(win, {
+    properties: ['createDirectory'],
+    filters: [{ name: 'marchmallow.config', extensions: ['json'] }],
   });
 
-  if (!paths) {
+  if (!path) {
     return null;
   }
 
-  writeFile(paths[0], data);
-};
-
-export const writeFile = (path, data) => {
-  fs.writeFileSync(path, JSON.stringify(data));
+  return await asyncWriteFile(path, JSON.stringify(data));
 };

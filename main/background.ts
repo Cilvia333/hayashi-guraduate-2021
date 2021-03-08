@@ -61,6 +61,12 @@ const handleUpdateStore = (orbits: OrbitData[]) => {
   }
 };
 
+const handleUpdateConfig = () => {
+  if (mainWindow !== null) {
+    mainWindow.webContents.send('ipc-config-update');
+  }
+};
+
 if (isProd) {
   serve({ directory: 'app' });
 } else {
@@ -308,7 +314,7 @@ ipcMain.on('ipc-toio-update-paths', (event, argv) => {
   }
 });
 
-ipcMain.handle('ipc-config-export', async () => {
+ipcMain.on('ipc-config-export', async () => {
   const storeData = store.store;
 
   if (!storeData) {
@@ -320,13 +326,16 @@ ipcMain.handle('ipc-config-export', async () => {
   return true;
 });
 
-ipcMain.handle('ipc-config-import', async () => {
+ipcMain.on('ipc-config-import', async () => {
   const storeData = await openFile();
 
   if (!storeData) {
     return false;
   }
+
   store.store = storeData;
+
+  handleUpdateConfig();
 
   return true;
 });
