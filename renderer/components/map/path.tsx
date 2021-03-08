@@ -11,7 +11,11 @@ interface Props {
 const Path: React.FC<Props> = (props) => {
   const { id, orbit } = props;
 
-  const [position, setPosition] = useState<Position>({ x: 0, y: 0, angle: 0 });
+  const [position, setPosition] = useState<Position>({
+    x: 0,
+    y: 0,
+    angle: 0,
+  });
   const [calcPosition, setCalcPosition] = useState<Position>({
     x: 0,
     y: 0,
@@ -34,7 +38,20 @@ const Path: React.FC<Props> = (props) => {
     init();
   });
 
-  useEffect(() => {}, [position]);
+  useEffect(() => {
+    const X_OFFSET = 34;
+    const Y_OFFSET = 35;
+    const X_MAX = 644;
+    const Y_MAX = 682;
+    const X_LENGTH = X_MAX - X_OFFSET;
+    const Y_LENGTH = Y_MAX - Y_OFFSET;
+
+    setCalcPosition({
+      x: (height / X_LENGTH) * (position.x - X_OFFSET),
+      y: (width / Y_LENGTH) * (position.y - Y_OFFSET),
+      angle: position.angle,
+    });
+  }, [position]);
 
   return (
     <>
@@ -49,7 +66,9 @@ const Path: React.FC<Props> = (props) => {
             <path d={path.path} key={`path_${index}`} />
           ))}
         </StyledSvg>
-        <Marker position={calcPosition} color={orbit.color} />
+        <Marker position={calcPosition} color={orbit.color}>
+          ▲
+        </Marker>
       </Container>
     </>
   );
@@ -62,6 +81,8 @@ const Container = styled.div`
 const Marker = styled.div<{ position: Position; color: string }>`
   ${tw`absolute top-0 left-0 m-0 w-12 h-12`}
 
+  font-size: 24px;
+
   ${({ color }) => css`
     color: ${color};
   `}
@@ -73,7 +94,9 @@ const Marker = styled.div<{ position: Position; color: string }>`
 `;
 
 const StyledSvg = styled.svg<{ color: string }>`
-  ${tw`stroke-current stroke-2`}
+  ${tw`stroke-current`}
+
+  stroke-width: 4px;
 
   ${({ color }) => css`
     color: ${color};

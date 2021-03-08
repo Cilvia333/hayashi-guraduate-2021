@@ -412,7 +412,7 @@ const MultiItemTitle = styled.h3<{ open: boolean }>`
 `;
 
 const ItemValue = styled.input`
-  ${tw`text-base font-text border`}
+  ${tw`text-base font-text border ml-2`}
 
   &[type='text'] {
     ${tw`border rounded-none focus:border-blue-500 focus:border-2 focus:outline-none w-full`}

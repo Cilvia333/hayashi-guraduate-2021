@@ -85,13 +85,15 @@ const Sidebar: React.FC = () => {
 };
 
 const Container = styled.div`
-  ${tw`w-1/4 h-screen border-0 border-r border-solid border-black relative `}
+  ${tw`w-1/4 border-0 border-r border-solid border-black relative `}
 
+  height: 100vh;
   max-height: 100vh;
+  overflow-y: scroll;
 `;
 
 const List = styled.section`
-  ${tw`px-4 relative overflow-y-scroll`}
+  ${tw`px-6 relative overflow-y-scroll mb-12`}
 `;
 
 const ConfigHeading = styled.div`
