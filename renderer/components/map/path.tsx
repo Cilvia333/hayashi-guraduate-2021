@@ -57,12 +57,6 @@ const Path: React.FC<Props> = (props) => {
       return;
     }
 
-    console.log({
-      x: (width / Y_LENGTH) * (position.y - Y_OFFSET),
-      y: (height / X_LENGTH) * (X_MAX - position.x - X_OFFSET),
-      angle: position.angle,
-    });
-
     setCalcPosition({
       x: (width / Y_LENGTH) * (position.y - Y_OFFSET),
       y: (height / X_LENGTH) * (X_MAX - position.x - X_OFFSET),

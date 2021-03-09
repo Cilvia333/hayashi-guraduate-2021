@@ -220,8 +220,6 @@ ipcMain.handle('ipc-toio-change-path', async (event, argv) => {
     const dom = new JSDOM(svg, { includeNodeLocations: true });
     const d = dom.window.document.querySelector('path').getAttribute('d');
 
-    console.log(d);
-
     const currentPath = orbits[id].paths.filter((_, i) => i === index)[0];
     const newPath = { ...currentPath, path: d };
 
@@ -350,8 +348,13 @@ ipcMain.on('ipc-config-import', async () => {
 
 ipcMain.on('ipc-toio-units-update', (event, argv) => {
   const num = argv as number;
+  const orbits = store.get('orbits');
 
   if (!num) {
+    return;
+  }
+
+  if (orbits.length < num || num < 0) {
     return;
   }
 

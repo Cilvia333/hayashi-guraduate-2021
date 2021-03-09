@@ -15,8 +15,14 @@ const Sidebar: React.FC = () => {
 
   const init = async () => {
     const orbits = await window.api.GetAllOrbits();
+    const units = await window.api.GetUnits();
+
     if (orbits) {
       setOrbits(orbits);
+    }
+
+    if (units) {
+      setUnits(units);
     }
   };
 
@@ -29,11 +35,23 @@ const Sidebar: React.FC = () => {
     }
   };
 
+  const handleDeleteOrbit = () => {
+    init();
+  };
+
   const handleUpdateConfig = () => {
     init();
   };
 
   const handleUpdateUnits = (num: number) => {
+    if (!num) {
+      return;
+    }
+
+    if (orbits.length < num || num < 0) {
+      return;
+    }
+
     window.api.UpdateUnits(num);
     setUnits(num);
   };
@@ -54,12 +72,11 @@ const Sidebar: React.FC = () => {
             <ConfigUnits
               type="number"
               value={units}
+              name="units"
               onChange={(e) => {
                 handleUpdateUnits(parseInt(e.target.value));
               }}
-            >
-              全て動かす
-            </ConfigUnits>
+            />
           </ConfigItem>
           <ConfigItem>
             <ConfigTitle>一括制御</ConfigTitle>
@@ -138,6 +155,10 @@ const ConfigHeading = styled.div`
 
 const ConfigItem = styled.div`
   ${tw`mb-4`}
+
+  &:nth-child(2) {
+    ${tw`mt-4`}
+  }
 `;
 
 const ConfigTitle = styled.div`
@@ -149,9 +170,11 @@ const ConfigContainer = styled.section`
 `;
 
 const ConfigButton = styled(Button)`
-  ${tw`mr-2 mt-4`}
+  ${tw`mr-2 mt-2`}
 `;
 
-const ConfigUnits = styled.input``;
+const ConfigUnits = styled.input`
+  ${tw`text-base font-text border m-0 w-24 text-right pr-2`}
+`;
 
 export default Sidebar;

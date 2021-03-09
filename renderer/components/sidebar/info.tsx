@@ -9,7 +9,7 @@ import Button from '~/components/share/button';
 interface Props {
   id: number;
   allStart: boolean;
-  onDelete: (id: number) => void;
+  onDelete: () => void;
 }
 
 type Indicator = 'full' | 'middle' | 'low';
@@ -401,7 +401,7 @@ const MultiItemTitle2 = styled(ItemTitle)`
 `;
 
 const MultiItemTitle = styled.h3<{ open: boolean }>`
-  ${tw`text-base font-text font-bold relative m-0 mt-2 flex justify-between items-center`}
+  ${tw`text-base font-text font-bold relative m-0 mt-2 flex justify-between items-center cursor-pointer`}
 
   &::before {
     ${tw`absolute -left-4 top-1 text-xs`}
