@@ -120,24 +120,23 @@ function movePathByRate(
 
 async function toio(
   id: number,
+  index: number,
   orbit: OrbitData,
   scanner: NearScanner,
   onBattery: (id: number, value: number) => void,
   onPosition: (id: number, position: Position) => void
 ): Promise<ToioRef> {
-  const store = new Store<StoreType>();
-
   const position: Position = {
     x: 0,
     y: 0,
     angle: 0,
   };
   let rate = 0;
-  let index = 0;
+  let path_index = 0;
   let isSleep = false;
   let isGoal = false;
   let mainLoopRef: NodeJS.Timeout | null = null;
-  let cube: Cube | null = null;
+  let cubes: Cube[] | null = null;
 
   const handlePosition = (info: PositionIdInfo) => {
     position.x = info.x;
@@ -156,28 +155,34 @@ async function toio(
       if (!isSleep) {
         rate += MOVE_LENGTH;
 
-        if (rate > orbitPath[index].length) {
+        if (rate > orbitPath[path_index].length) {
           if (isGoal) {
             rate = 0;
             isGoal = false;
             isSleep = true;
-            cube[id].stop();
+            cubes[index].stop();
 
-            if (++index >= orbitPath.length) {
-              index = 0;
+            if (++path_index >= orbitPath.length) {
+              path_index = 0;
             }
 
             setTimeout(() => {
               isSleep = false;
-            }, orbitPath[index].delayMs);
+            }, orbitPath[path_index].delayMs);
           } else {
-            rate = orbitPath[index].length;
+            rate = orbitPath[path_index].length;
           }
         }
 
-        movePathByRate(cube[id], position, orbitPath[index], rate, () => {
-          isGoal = true;
-        });
+        movePathByRate(
+          cubes[index],
+          position,
+          orbitPath[path_index],
+          rate,
+          () => {
+            isGoal = true;
+          }
+        );
       }
     }, 50);
 
@@ -194,13 +199,13 @@ async function toio(
     } as PathData;
   });
 
-  cube = (await scanner.start()) as Cube[];
+  cubes = (await scanner.start()) as Cube[];
 
-  await cube[id].connect();
+  await cubes[index].connect();
   console.log('connected!');
-  cube[id].on('id:position-id', handlePosition);
-  cube[id].on('battery:battery', handleBattery);
-  cube[id].turnOnLight({ red, green, blue, durationMs: 0 });
+  cubes[index].on('id:position-id', handlePosition);
+  cubes[index].on('battery:battery', handleBattery);
+  cubes[index].turnOnLight({ red, green, blue, durationMs: 0 });
 
   return {
     stop: () => clearInterval(mainLoopRef),
@@ -208,7 +213,7 @@ async function toio(
       mainLoopRef = setMainLoop();
     },
     disconnect: async () => {
-      await cube[id].disconnect();
+      await cubes[index].disconnect();
     },
     id,
   };

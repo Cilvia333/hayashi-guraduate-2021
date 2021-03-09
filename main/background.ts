@@ -16,8 +16,8 @@ const asyncReadFile = promisify(readFile);
 let mainWindow: Electron.BrowserWindow = null;
 const isProd: boolean = process.env.NODE_ENV === 'production';
 const toioRefs = new Map<number, ToioRef>();
-const toioScaner = new NearScanner(1);
 const store = new Store<StoreType>();
+const toioScaner = new NearScanner(1);
 
 const default_path = {
   path:
@@ -112,6 +112,7 @@ ipcMain.handle('ipc-toio-connect', async (event, argv) => {
   } else if (orbits.length > id) {
     const ref = await toio(
       id,
+      toioRefs.size,
       orbits[id],
       toioScaner,
       handleBattery,
