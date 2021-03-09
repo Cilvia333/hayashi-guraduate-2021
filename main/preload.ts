@@ -19,6 +19,12 @@ contextBridge.exposeInMainWorld('api', {
   ToioPositionUpdate: (handler: (arg: any) => void) => {
     ipcRenderer.on('ipc-toio-update-position', (event, arg) => handler(arg));
   },
+  UpdateUnits: (data: number) => {
+    ipcRenderer.send('ipc-toio-units-update', data);
+  },
+  GetUnits: async () => {
+    return await ipcRenderer.invoke('ipc-toio-units');
+  },
   UpdateColor: (id: number, data: string) => {
     ipcRenderer.send('ipc-toio-update-color', { id, data });
   },

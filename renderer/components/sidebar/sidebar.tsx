@@ -11,6 +11,7 @@ import Button from '~/components/share/button';
 const Sidebar: React.FC = () => {
   const [orbits, setOrbits] = useState<OrbitData[]>(null);
   const [allStart, setAllStart] = useState<boolean>(false);
+  const [units, setUnits] = useState(1);
 
   const init = async () => {
     const orbits = await window.api.GetAllOrbits();
@@ -28,12 +29,13 @@ const Sidebar: React.FC = () => {
     }
   };
 
-  const handleDeleteOrbit = (id: number) => {
+  const handleUpdateConfig = () => {
     init();
   };
 
-  const handleUpdateConfig = () => {
-    init();
+  const handleUpdateUnits = (num: number) => {
+    window.api.UpdateUnits(num);
+    setUnits(num);
   };
 
   useEffectOnce(() => {
@@ -47,6 +49,18 @@ const Sidebar: React.FC = () => {
         <Header />
         <ConfigContainer>
           <ConfigHeading>設定</ConfigHeading>
+          <ConfigItem>
+            <ConfigTitle>制御台数</ConfigTitle>
+            <ConfigUnits
+              type="number"
+              value={units}
+              onChange={(e) => {
+                handleUpdateUnits(parseInt(e.target.value));
+              }}
+            >
+              全て動かす
+            </ConfigUnits>
+          </ConfigItem>
           <ConfigItem>
             <ConfigTitle>一括制御</ConfigTitle>
             <ConfigButton
@@ -137,5 +151,7 @@ const ConfigContainer = styled.section`
 const ConfigButton = styled(Button)`
   ${tw`mr-2 mt-4`}
 `;
+
+const ConfigUnits = styled.input``;
 
 export default Sidebar;

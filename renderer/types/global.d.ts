@@ -11,6 +11,8 @@ export interface Sandbox {
   ToioStop: (id) => void;
   ToioBatteryUpdate: (handler: (arg: any) => void) => void;
   ToioPositionUpdate: (handler: (arg: any) => void) => void;
+  UpdateUnits: (data: number) => void;
+  GetUnits: () => Promise<number>;
   UpdateColor: (id: number, data: string) => void;
   UpdateName: (id: number, data: string) => void;
   UpdateStartPosition: (id: number, data: Position) => void;

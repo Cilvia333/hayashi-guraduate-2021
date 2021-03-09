@@ -12,12 +12,11 @@ import { createWindow, openFile, saveFile } from './helpers';
 import toio from './toio';
 
 const asyncReadFile = promisify(readFile);
-
-let mainWindow: Electron.BrowserWindow = null;
 const isProd: boolean = process.env.NODE_ENV === 'production';
 const toioRefs = new Map<number, ToioRef>();
 const store = new Store<StoreType>();
-const toioScaner = new NearScanner(1);
+let toioScaner = new NearScanner(1);
+let mainWindow: Electron.BrowserWindow = null;
 
 const default_path = {
   path:
@@ -39,9 +38,6 @@ const def_orbit = {
 
   paths: [default_path],
 };
-
-console.log(store.path);
-//store.set('orbits', [def_orbit]);
 
 const handleBattery = (id: number, value: number) => {
   if (mainWindow !== null) {
@@ -71,6 +67,17 @@ if (isProd) {
   serve({ directory: 'app' });
 } else {
   app.setPath('userData', `${app.getPath('userData')} (development)`);
+}
+
+if (!store.get('orbits')) {
+  store.set('orbits', [def_orbit]);
+}
+
+if (!store.get('units')) {
+  store.set('units', 1);
+  toioScaner = new NearScanner(1);
+} else {
+  toioScaner = new NearScanner(store.get('units'));
 }
 
 (async () => {
@@ -339,4 +346,27 @@ ipcMain.on('ipc-config-import', async () => {
   handleUpdateConfig();
 
   return true;
+});
+
+ipcMain.on('ipc-toio-units-update', (event, argv) => {
+  const num = argv as number;
+
+  if (!num) {
+    return;
+  }
+
+  toioScaner = new NearScanner(num);
+  store.set('units', num);
+});
+
+ipcMain.handle('ipc-toio-units', () => {
+  const units = store.get('units');
+
+  if (!units) {
+    store.set('units', 1);
+    toioScaner = new NearScanner(1);
+    return 1;
+  }
+
+  return units;
 });
