@@ -13,11 +13,11 @@
     "build:linux": "nextron build --linux",
     "postinstall": "electron-builder install-app-deps",
     "fmt": "run-s fmt:*",
-    "fmt:prettier": "yarn lint:prettier --write",
-    "fmt:eslint": "yarn lint:eslint --fix",
+    "fmt:renderer": "yarn lint:renderer --fix",
+    "fmt:main": "yarn lint:main --fix",
     "lint": "run-s lint:*",
-    "lint:prettier": "prettier \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "lint:eslint": "eslint renderer --ext .ts,.tsx,.js,.jsx"
+    "lint:renderer": "eslint renderer --ext .ts,.tsx,.js,.jsx",
+    "lint:main": "eslint main --ext .ts,.tsx,.js,.jsx"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.32",

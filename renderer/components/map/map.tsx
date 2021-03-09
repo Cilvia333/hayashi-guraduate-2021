@@ -26,8 +26,6 @@ const Map: React.FC = () => {
     init();
   };
 
-  const handleSelectCheck = () => {};
-
   useEffectOnce(() => {
     init();
     window.api.UpdateConfig(handleUpdateConfig);
