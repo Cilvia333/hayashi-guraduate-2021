@@ -155,7 +155,7 @@ const Info: React.FC<Props> = (props) => {
 
   const handleDeleteOrbit = async () => {
     await window.api.DeleteOrbit(id);
-    onDelete(id);
+    onDelete();
     return;
   };
 
