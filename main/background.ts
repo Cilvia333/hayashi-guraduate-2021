@@ -11,13 +11,6 @@ import { JSDOM } from 'jsdom';
 import { createWindow, openFile, saveFile } from './helpers';
 import toio from './toio';
 
-const asyncReadFile = promisify(readFile);
-const isProd: boolean = process.env.NODE_ENV === 'production';
-const toioRefs = new Map<number, ToioRef>();
-const store = new Store<StoreType>();
-let toioScaner = new NearScanner(1);
-let mainWindow: Electron.BrowserWindow = null;
-
 const default_path = {
   path:
     'M1659.13,1590.51l135.25,133.71s154.55,243.73-18.55,348.68h0c-225.52,130.72-621.41-172.57-596.37-506.95-6.42-74-36.32-142.82-97-195',
@@ -25,7 +18,6 @@ const default_path = {
   invert: true,
   delayMs: 1000,
 };
-
 const def_orbit = {
   id: 0,
   name: 'Takashi',
@@ -38,6 +30,15 @@ const def_orbit = {
 
   paths: [default_path],
 };
+const ScannerTimeoutMs = 2000;
+
+const asyncReadFile = promisify(readFile);
+const isProd: boolean = process.env.NODE_ENV === 'production';
+const toioRefs = new Map<number, ToioRef>();
+const store = new Store<StoreType>();
+let toioScaner = new NearScanner(1, ScannerTimeoutMs);
+let mainWindow: Electron.BrowserWindow = null;
+let activeFlag = false;
 
 const handleBattery = (id: number, value: number) => {
   if (mainWindow !== null) {
@@ -63,6 +64,12 @@ const handleUpdateConfig = () => {
   }
 };
 
+const handleDisableUnitsSetting = () => {
+  if (mainWindow !== null) {
+    mainWindow.webContents.send('ipc-units-disable');
+  }
+};
+
 if (isProd) {
   serve({ directory: 'app' });
 } else {
@@ -75,9 +82,9 @@ if (!store.get('orbits')) {
 
 if (!store.get('units')) {
   store.set('units', 1);
-  toioScaner = new NearScanner(1);
+  toioScaner = new NearScanner(1, ScannerTimeoutMs);
 } else {
-  toioScaner = new NearScanner(store.get('units'));
+  toioScaner = new NearScanner(store.get('units'), ScannerTimeoutMs);
 }
 
 (async () => {
@@ -117,6 +124,9 @@ ipcMain.handle('ipc-toio-connect', async (event, argv) => {
     console.log('あるよ');
     return true;
   } else if (orbits.length > id) {
+    console.log('search!');
+    console.log(toioScaner);
+
     const ref = await toio(
       id,
       toioRefs.size,
@@ -125,6 +135,15 @@ ipcMain.handle('ipc-toio-connect', async (event, argv) => {
       handleBattery,
       handlePosition
     );
+
+    console.log(ref);
+
+    if (!ref) {
+      return false;
+    }
+
+    activeFlag = true;
+    handleDisableUnitsSetting();
     toioRefs.set(id, ref);
     return true;
   }
@@ -350,6 +369,10 @@ ipcMain.on('ipc-toio-units-update', (event, argv) => {
   const num = argv as number;
   const orbits = store.get('orbits');
 
+  if (activeFlag) {
+    return;
+  }
+
   if (!num) {
     return;
   }
@@ -358,7 +381,7 @@ ipcMain.on('ipc-toio-units-update', (event, argv) => {
     return;
   }
 
-  toioScaner = new NearScanner(num);
+  toioScaner = new NearScanner(num, ScannerTimeoutMs);
   store.set('units', num);
 });
 
@@ -367,7 +390,7 @@ ipcMain.handle('ipc-toio-units', () => {
 
   if (!units) {
     store.set('units', 1);
-    toioScaner = new NearScanner(1);
+    toioScaner = new NearScanner(1, ScannerTimeoutMs);
     return 1;
   }
 

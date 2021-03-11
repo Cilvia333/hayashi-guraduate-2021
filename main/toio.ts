@@ -125,7 +125,7 @@ async function toio(
   scanner: NearScanner,
   onBattery: (id: number, value: number) => void,
   onPosition: (id: number, position: Position) => void
-): Promise<ToioRef> {
+): Promise<ToioRef | null> {
   const position: Position = {
     x: 0,
     y: 0,
@@ -137,13 +137,17 @@ async function toio(
   let isGoal = false;
   let mainLoopRef: NodeJS.Timeout | null = null;
   let cubes: Cube[] | null = null;
+  let sendCound = 0;
 
   const handlePosition = (info: PositionIdInfo) => {
     position.x = info.x;
     position.y = info.y;
     position.angle = info.angle;
 
-    onPosition(id, position);
+    if (++sendCound > 100) {
+      sendCound = 0;
+      onPosition(id, position);
+    }
   };
 
   const handleBattery = (info: { level: number }) => {
@@ -199,9 +203,20 @@ async function toio(
     } as PathData;
   });
 
-  cubes = (await scanner.start()) as Cube[];
+  cubes = (await scanner.start().catch(() => console.log('error'))) as Cube[];
 
-  await cubes[index].connect();
+  if (!cubes || cubes.length < 1) {
+    console.log('cubes connot find!');
+    return null;
+  }
+
+  const result = await cubes[index].connect();
+
+  if (!result) {
+    console.log('cube connot connect!');
+    return null;
+  }
+
   console.log('connected!');
   cubes[index].on('id:position-id', handlePosition);
   cubes[index].on('battery:battery', handleBattery);

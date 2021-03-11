@@ -99,7 +99,10 @@ const Info: React.FC<Props> = (props) => {
 
   const handleActive = async (id: number) => {
     if (!active) {
-      await window.api.ToioConnect(id);
+      const result = await window.api.ToioConnect(id);
+      if (!result) {
+        return;
+      }
       toggleActive(true);
       return;
     }

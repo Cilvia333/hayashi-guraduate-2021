@@ -2,7 +2,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 
 contextBridge.exposeInMainWorld('api', {
   ToioConnect: async (id: number) => {
-    await ipcRenderer.invoke('ipc-toio-connect', id);
+    return await ipcRenderer.invoke('ipc-toio-connect', id);
   },
   ToioDisconnect: async (id: number) => {
     await ipcRenderer.invoke('ipc-toio-disconnect', id);
@@ -18,6 +18,9 @@ contextBridge.exposeInMainWorld('api', {
   },
   ToioPositionUpdate: (handler: (arg: any) => void) => {
     ipcRenderer.on('ipc-toio-update-position', (event, arg) => handler(arg));
+  },
+  DisableUnits: (handler: () => void) => {
+    ipcRenderer.on('ipc-toio-units-disable', handler);
   },
   UpdateUnits: (data: number) => {
     ipcRenderer.send('ipc-toio-units-update', data);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useEffectOnce } from 'react-use';
+import { useEffectOnce, useToggle } from 'react-use';
 import styled, { css } from 'styled-components';
 import tw from 'twin.macro';
 
@@ -12,6 +12,7 @@ const Sidebar: React.FC = () => {
   const [orbits, setOrbits] = useState<OrbitData[]>(null);
   const [allStart, setAllStart] = useState<boolean>(false);
   const [units, setUnits] = useState(1);
+  const [activeUnits, setActiveUnits] = useToggle(true);
 
   const init = async () => {
     const orbits = await window.api.GetAllOrbits();
@@ -42,6 +43,9 @@ const Sidebar: React.FC = () => {
   const handleUpdateConfig = () => {
     init();
   };
+  const handleDisableUnits = () => {
+    setActiveUnits(false);
+  };
 
   const handleUpdateUnits = (num: number) => {
     if (!num) {
@@ -59,6 +63,7 @@ const Sidebar: React.FC = () => {
   useEffectOnce(() => {
     init();
     window.api.UpdateConfig(handleUpdateConfig);
+    window.api.DisableUnits(handleDisableUnits);
   });
 
   return (
@@ -73,6 +78,7 @@ const Sidebar: React.FC = () => {
               type="number"
               value={units}
               name="units"
+              disabled={!activeUnits}
               onChange={(e) => {
                 handleUpdateUnits(parseInt(e.target.value));
               }}

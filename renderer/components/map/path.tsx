@@ -44,25 +44,7 @@ const Path: React.FC<Props> = (props) => {
 
   useEffectOnce(() => {
     init();
-
-    setCalcPosition({
-      x: (width / Y_LENGTH) * (position.y - Y_OFFSET),
-      y: (height / X_LENGTH) * (X_MAX - position.x - X_OFFSET),
-      angle: position.angle,
-    });
   });
-
-  useEffect(() => {
-    if (!position) {
-      return;
-    }
-
-    setCalcPosition({
-      x: (width / Y_LENGTH) * (position.y - Y_OFFSET),
-      y: (height / X_LENGTH) * (X_MAX - position.x - X_OFFSET),
-      angle: position.angle,
-    });
-  }, [position, width, height]);
 
   return (
     <>
@@ -77,7 +59,14 @@ const Path: React.FC<Props> = (props) => {
             <path d={path.path} key={`path_${index}`} />
           ))}
         </StyledSvg>
-        <Marker position={calcPosition} color={orbit.color}>
+        <Marker
+          position={{
+            x: (width / Y_LENGTH) * (position.y - Y_OFFSET),
+            y: (height / X_LENGTH) * (X_MAX - position.x - X_OFFSET),
+            angle: position.angle,
+          }}
+          color={orbit.color}
+        >
           <StyledVector fill="transparent" color={orbit.color} />
         </Marker>
       </Container>
@@ -93,6 +82,7 @@ const Marker = styled.div<{ position: Position; color: string }>`
   ${tw`absolute top-0 left-0 m-0 w-12 h-12`}
 
   font-size: 24px;
+  transform-origin: center;
 
   ${({ color }) => css`
     color: ${color};

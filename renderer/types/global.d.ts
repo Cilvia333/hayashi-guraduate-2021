@@ -5,12 +5,13 @@ declare global {
 }
 
 export interface Sandbox {
-  ToioConnect: (id: number) => Promise<void | string[]>;
+  ToioConnect: (id: number) => Promise<boolean>;
   ToioDisconnect: (id: number) => Promise<void | string[]>;
   ToioStart: (id) => void;
   ToioStop: (id) => void;
   ToioBatteryUpdate: (handler: (arg: any) => void) => void;
   ToioPositionUpdate: (handler: (arg: any) => void) => void;
+  DisableUnits: (handler: () => void) => void;
   UpdateUnits: (data: number) => void;
   GetUnits: () => Promise<number>;
   UpdateColor: (id: number, data: string) => void;
